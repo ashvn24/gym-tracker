@@ -2,6 +2,47 @@ import { Link } from "react-router-dom";
 import { useMuscleGroups, useAddMuscleGroup, useInit } from "../hooks";
 import { useState, useEffect } from "react";
 
+// Extract card to avoid useState in loop
+function MuscleGroupCard({ g }: { g: any }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  return (
+    <Link
+      key={g.id}
+      to={`/muscle/${g.id}`}
+      className="group block bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
+    >
+      <div className="h-32 sm:h-36 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center relative overflow-hidden">
+        {g.imageUrl ? (
+          <>
+            {!imgLoaded && (
+              <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
+            )}
+            <img
+              src={g.imageUrl}
+              alt={g.name}
+              className={`w-full h-full object-cover transition-opacity duration-700 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+              onLoad={() => setImgLoaded(true)}
+            />
+          </>
+        ) : (
+          <div className="text-6xl sm:text-7xl font-bold text-blue-600/60 dark:text-blue-400/60 group-hover:scale-110 transition-transform duration-300">
+            {g.name.charAt(0)}
+          </div>
+        )}
+      </div>
+      <div className="p-4 sm:p-5">
+        <div className="font-semibold text-lg text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+          {g.name}
+        </div>
+        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          Tap to explore workouts
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function Home() {
   useInit();
   const { data: muscleGroups, isLoading, error, refetch } = useMuscleGroups();
@@ -71,29 +112,7 @@ export default function Home() {
       ) : muscleGroups && muscleGroups.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {muscleGroups.map(g => (
-            <Link
-              key={g.id}
-              to={`/muscle/${g.id}`}
-              className="group block bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
-            >
-              <div className="h-32 sm:h-36 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center relative overflow-hidden">
-                {g.imageUrl ? (
-                  <img src={g.imageUrl} alt={g.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                ) : (
-                  <div className="text-6xl sm:text-7xl font-bold text-blue-600/60 dark:text-blue-400/60 group-hover:scale-110 transition-transform duration-300">
-                    {g.name.charAt(0)}
-                  </div>
-                )}
-              </div>
-              <div className="p-4 sm:p-5">
-                <div className="font-semibold text-lg text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
-                  {g.name}
-                </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Tap to explore workouts
-                </div>
-              </div>
-            </Link>
+            <MuscleGroupCard key={g.id} g={g} />
           ))}
         </div>
       ) : (

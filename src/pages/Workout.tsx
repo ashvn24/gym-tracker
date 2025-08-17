@@ -197,42 +197,73 @@ export default function Workout() {
             ))}
           </div>
         ) : sessions && sessions.length > 0 ? (
-          <div className="space-y-3">
-            {sessions.map(s => (
-              <div key={s.id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+          <div className="relative pl-6">
+            {/* Timeline vertical line */}
+            <div className="absolute left-1.5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 via-gray-300 to-gray-200 dark:from-blue-700 dark:via-gray-700 dark:to-gray-800"></div>
+            <div className="space-y-6">
+              {sessions.map((s, idx) => (
+                <div
+                  key={s.id}
+                  className="relative group transition-all duration-300"
+                >
+                  {/* Timeline dot */}
+                  <div className="absolute -left-6 top-6 w-4 h-4 rounded-full border-2 border-blue-500 dark:border-blue-400 bg-white dark:bg-gray-800 flex items-center justify-center shadow-md">
+                    <svg className="w-2 h-2 text-blue-500 dark:text-blue-400" fill="currentColor" viewBox="0 0 8 8">
+                      <circle cx="4" cy="4" r="4" />
+                    </svg>
+                  </div>
+                  {/* Card */}
+                  <div className="bg-gradient-to-br from-blue-50 via-white to-gray-50 dark:from-blue-900/10 dark:via-gray-800 dark:to-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow hover:shadow-lg transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center shadow">
+                          <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-900 dark:text-gray-100 text-base">{dayjs(s.date).format("MMM DD, YYYY")}</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400 flex gap-2">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium">
+                              {s.sets.length} sets
+                            </span>
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium">
+                              {maxSetWeight(s)}{unit} top set
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-gray-100">{dayjs(s.date).format("MMM DD, YYYY")}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{s.sets.length} sets • {maxSetWeight(s)}{unit} top set</div>
+                    
+                    {s.notes && (
+                      <div className="mb-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
+                        <div className="text-sm text-blue-800 dark:text-blue-200 italic">{s.notes}</div>
+                      </div>
+                    )}
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
+                      {s.sets.map((set, idx) => (
+                        <div key={idx} className="bg-white dark:bg-gray-700 rounded-lg p-2 text-center text-sm shadow-sm border border-gray-100 dark:border-gray-800">
+                          <div className="font-bold text-blue-700 dark:text-blue-300 text-lg">{set.reps}</div>
+                          <div className="text-gray-600 dark:text-gray-300 flex items-center justify-center gap-1">
+                            <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M6 2a1 1 0 00-1 1v2a1 1 0 001 1h8a1 1 0 001-1V3a1 1 0 00-1-1H6z" />
+                              <path fillRule="evenodd" d="M4 7a2 2 0 012-2h8a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2V7zm2 0v9h8V7H6z" clipRule="evenodd" />
+                            </svg>
+                            {set.weight}{unit}
+                          </div>
+                          {set.rpe && (
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              <span className="inline-block px-2 py-0.5 rounded bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 font-semibold">RPE {set.rpe}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-                
-                {s.notes && (
-                  <div className="mb-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
-                    <div className="text-sm text-blue-800 dark:text-blue-200">{s.notes}</div>
-                  </div>
-                )}
-                
-                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                  {s.sets.map((set, idx) => (
-                    <div key={idx} className="bg-white dark:bg-gray-600 rounded p-2 text-center text-sm">
-                      <div className="font-medium text-gray-900 dark:text-gray-100">{set.reps}</div>
-                      <div className="text-gray-600 dark:text-gray-300">{set.weight}{unit}</div>
-                      {set.rpe && (
-                        <div className="text-xs text-gray-500 dark:text-gray-400">RPE {set.rpe}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ) : (
           <div className="text-center py-8">
