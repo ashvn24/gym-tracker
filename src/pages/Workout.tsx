@@ -201,7 +201,7 @@ export default function Workout() {
             {/* Timeline vertical line */}
             <div className="absolute left-1.5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 via-gray-300 to-gray-200 dark:from-blue-700 dark:via-gray-700 dark:to-gray-800"></div>
             <div className="space-y-6">
-              {sessions.map((s, idx) => (
+              {sessions.map((s) => (
                 <div
                   key={s.id}
                   className="relative group transition-all duration-300"
